@@ -2,24 +2,20 @@
 
 namespace Bfg\WebHooker\Observers;
 
-use Bfg\WebHooker\Jobs\WebHookerAssociateJob;
-use Bfg\WebHooker\Jobs\WebHookerSubscribeJob;
-use Bfg\WebHooker\Jobs\WebHookerUnsubscribeJob;
 use Bfg\WebHooker\Models\WebHook;
 use Illuminate\Support\Facades\Crypt;
 
 class WebHookObserver
 {
-    public function creating(WebHook $hook)
+    /**
+     * @param  WebHook  $hook
+     * @return void
+     */
+    public function creating(WebHook $hook): void
     {
         if (! $hook->settings) {
 
             $hook->settings = [];
-        }
-
-        if (! $hook->response) {
-
-            $hook->response = [];
         }
 
         foreach ($hook::getDefaultSettings() as $key => $val) {
@@ -47,20 +43,23 @@ class WebHookObserver
         }
     }
 
-    public function created(WebHook $hook)
+    /**
+     * @param  WebHook  $hook
+     * @return void
+     */
+    public function created(WebHook $hook): void
     {
         $hook->hash = Crypt::encrypt($hook->id);
 
-        WebHookerSubscribeJob::dispatch($hook);
+        $hook->save();
     }
 
-    public function updated(WebHook $hook)
+    /**
+     * @param  WebHook  $hook
+     * @return void
+     */
+    public function deleting(WebHook $hook): void
     {
-        WebHookerAssociateJob::dispatch($hook);
-    }
-
-    public function deleted(WebHook $hook)
-    {
-        WebHookerUnsubscribeJob::dispatch($hook);
+        $hook->organizer?->unsubscribe($hook);
     }
 }

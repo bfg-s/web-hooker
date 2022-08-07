@@ -17,12 +17,11 @@ class CreateWebhookTable extends Migration
         Schema::create('webhooks', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->nullableMorphs('wh');
-            $table->string('organizer', 512);
-            $table->string('event', 45);
+            $table->string('organizer', 512)->nullable();
+            $table->string('event', 45)->nullable();
             $table->json('settings');
             $table->string('hash', 512)->nullable();
             $table->smallInteger('status')->default('0');
-            $table->json('response');
             $table->timestamp('response_at')->nullable();
             $table->timestamp('subscribe_at')->nullable();
             $table->timestamp('subscribed_at')->nullable();

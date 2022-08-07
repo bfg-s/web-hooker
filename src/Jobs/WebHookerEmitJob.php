@@ -9,7 +9,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class WebHookerSubscribeJob implements ShouldQueue
+class WebHookerEmitJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -17,9 +17,11 @@ class WebHookerSubscribeJob implements ShouldQueue
      * Create a new job instance.
      *
      * @param  WebHook  $hook
+     * @param  array  $request
      */
     public function __construct(
-        public WebHook $hook
+        public WebHook $hook,
+        public array $request,
     ) {
         $this->queue = config('webhooker.queue');
     }
@@ -31,16 +33,11 @@ class WebHookerSubscribeJob implements ShouldQueue
      */
     public function handle()
     {
-        if (
-            ! $this->hook->status
-            && (! $this->hook->subscribe_at || $this->hook->subscribe_at <= now())
-            && (! $this->hook->organizer || $this->hook->organizer?->subscribe($this->hook))
-        ) {
-            $this->hook->update([
-                'subscribed_at' => now(),
-                'subscribe_at' => null,
-                'status' => 1
-            ]);
-        }
+        event(
+            app($this->hook->event, [
+                'hook' => $this->hook,
+                'request' => $this->request
+            ])
+        );
     }
 }

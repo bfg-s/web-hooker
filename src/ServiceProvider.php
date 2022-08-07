@@ -2,6 +2,9 @@
 
 namespace Bfg\WebHooker;
 
+use Bfg\WebHooker\Commands\WebHoodAssociateCommand;
+use Bfg\WebHooker\Models\WebHook;
+use Bfg\WebHooker\Observers\WebHookObserver;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
 
@@ -21,6 +24,14 @@ class ServiceProvider extends IlluminateServiceProvider
             __DIR__ . '/../config/webhooker.php',
             'webhooker'
         );
+
+        $this->publishes([
+            __DIR__ . '/../migrations' => database_path('migrations')
+        ], 'web-hooker-migrations');
+
+        $this->publishes([
+            __DIR__ . '/../config/webhooker.php' => config_path('webhooker.php')
+        ], 'web-hooker-config');
     }
 
     /**
@@ -31,8 +42,14 @@ class ServiceProvider extends IlluminateServiceProvider
     {
         Route::middleware(config('webhooker.routes.middleware'))
             ->prefix(config('webhooker.routes.prefix'))
-            ->as('webhook.')
-            ->group(__DIR__ . '/routes.php');
+            ->any('{hash}', [\Bfg\WebHooker\Controllers\WebHookerController::class, 'response'])
+            ->name('webhook.response');
+
+        WebHook::observe(WebHookObserver::class);
+
+        $this->commands([
+            WebHoodAssociateCommand::class
+        ]);
     }
 }
 

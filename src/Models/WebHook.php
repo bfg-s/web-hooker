@@ -2,16 +2,21 @@
 
 namespace Bfg\WebHooker\Models;
 
-use Bfg\WebHooker\WebHookOrganizerAbstract;
+use Bfg\WebHooker\Jobs\WebHookerSubscribeJob;
+use Bfg\WebHooker\Jobs\WebHookerUnsubscribeJob;
+use Bfg\WebHooker\Traits\WebHooked;
+use Bfg\WebHooker\WebHookOrganizerInterface;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Foundation\Bus\PendingDispatch;
 
 /**
  * @property-read int $id
  * @property string $wh_type
  * @property int $wh_id
- * @property WebHookOrganizerAbstract|null $organizer
- * @property mixed $event
+ * @property WebHookOrganizerInterface|null $organizer
+ * @property string|null $event
  * @property array $settings
  * @property string $hash
  * @property int $status
@@ -24,6 +29,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read Carbon|null $created_at
  * @property-read Carbon|null $updated_at
  * @property-read string $route_response
+ * @property-read Model|WebHooked $model
  */
 class WebHook extends Model
 {
@@ -43,7 +49,6 @@ class WebHook extends Model
         'settings',
         'hash',
         'status',
-        'response',
         'response_at',
         'subscribe_at',
         'subscribed_at',
@@ -62,7 +67,6 @@ class WebHook extends Model
         'settings' => 'array',
         'hash' => 'string',
         'status' => 'int',
-        'response' => 'json',
     ];
 
     /**
@@ -82,24 +86,26 @@ class WebHook extends Model
     protected static array $defaultSettings = [];
 
     /**
-     * @param $value
-     * @return WebHookOrganizerAbstract|null
+     * @return MorphTo
      */
-    public function getOrganizerAttribute($value): ?WebHookOrganizerAbstract
+    public function model(): MorphTo
+    {
+        return $this->morphTo('wh');
+    }
+
+    /**
+     * @param $value
+     * @return WebHookOrganizerInterface|null
+     */
+    public function getOrganizerAttribute($value): ?WebHookOrganizerInterface
     {
         return $value ? app($value) : null;
     }
 
     /**
-     * @param $value
-     * @return mixed|null
+     * @return string
      */
-    public function getEventAttribute($value): mixed
-    {
-        return $value ? app($value) : null;
-    }
-
-    public function getRouteResponseAttribute()
+    public function getRouteResponseAttribute(): string
     {
         return route('webhook.response', $this->hash);
     }
@@ -108,7 +114,7 @@ class WebHook extends Model
      * @param  array  $settings
      * @return void
      */
-    public static function setDefaultSettings(array $settings)
+    public static function setDefaultSettings(array $settings): void
     {
         static::$defaultSettings = $settings;
     }
@@ -119,5 +125,86 @@ class WebHook extends Model
     public static function getDefaultSettings(): array
     {
         return static::$defaultSettings;
+    }
+
+    /**
+     * @param  array  $settings
+     * @return $this
+     */
+    public function setSettings(array $settings): static
+    {
+        $this->settings = array_merge($this->settings, $settings);
+
+        return $this;
+    }
+
+    /**
+     * @param  string  $key
+     * @param  mixed|null  $value
+     * @return $this
+     */
+    public function setSetting(string $key, mixed $value = null): static
+    {
+        return $this->setSettings([$key => $value]);
+    }
+
+    /**
+     * @param  string  $class
+     * @return $this
+     */
+    public function setOrganizer(string $class): static
+    {
+        $this->organizer = $class;
+
+        return $this;
+    }
+
+    public function setEvent(string $class): static
+    {
+        $this->event = $class;
+
+        return $this;
+    }
+
+    /**
+     * @return PendingDispatch|null
+     */
+    public function subscribe(): ?PendingDispatch
+    {
+        return WebHookerSubscribeJob::dispatch($this);
+    }
+
+    /**
+     * @return PendingDispatch|null
+     */
+    public function unsubscribe(): ?PendingDispatch
+    {
+        return WebHookerUnsubscribeJob::dispatch($this);
+    }
+
+    /**
+     * @param  Carbon  $datetime
+     * @return $this
+     */
+    public function subscribeDelay(Carbon $datetime): static
+    {
+        $this->update([
+            'subscribe_at' => $datetime
+        ]);
+
+        return $this;
+    }
+
+    /**
+     * @param  Carbon  $datetime
+     * @return $this
+     */
+    public function unsubscribeDelay(Carbon $datetime): static
+    {
+        $this->update([
+            'unsubscribe_at' => $datetime
+        ]);
+
+        return $this;
     }
 }
