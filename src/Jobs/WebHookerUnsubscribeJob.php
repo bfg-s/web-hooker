@@ -17,9 +17,11 @@ class WebHookerUnsubscribeJob implements ShouldQueue
      * Create a new job instance.
      *
      * @param  WebHook  $hook
+     * @param  bool  $deleting
      */
     public function __construct(
-        public WebHook $hook
+        public WebHook $hook,
+        public bool $deleting = false,
     ) {
         $this->queue = config('webhooker.queue');
     }
@@ -36,7 +38,7 @@ class WebHookerUnsubscribeJob implements ShouldQueue
             && (! $this->hook->unsubscribe_at || $this->hook->unsubscribe_at <= now())
             && (! $this->hook->organizer || $this->hook->organizer?->unsubscribe($this->hook))
         ) {
-            $this->hook->update([
+            $this->deleting && $this->hook->update([
                 'unsubscribed_at' => now(),
                 'unsubscribe_at' => null,
                 'status' => 0

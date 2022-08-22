@@ -20,6 +20,7 @@ class WebHookerController
         /** @var WebHook $hook */
         $hook = WebHook::query()
             ->where('status', 1)
+            ->where('type', 'http_request')
             ->whereNotNull('event')
             ->findOrFail($id);
 

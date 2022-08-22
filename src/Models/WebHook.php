@@ -5,6 +5,7 @@ namespace Bfg\WebHooker\Models;
 use Bfg\WebHooker\Jobs\WebHookerSubscribeJob;
 use Bfg\WebHooker\Jobs\WebHookerUnsubscribeJob;
 use Bfg\WebHooker\Traits\WebHooked;
+use Bfg\WebHooker\WebHookOrganizerAbstract;
 use Bfg\WebHooker\WebHookOrganizerInterface;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -13,9 +14,10 @@ use Illuminate\Foundation\Bus\PendingDispatch;
 
 /**
  * @property-read int $id
+ * @property string $type
  * @property string $wh_type
  * @property int $wh_id
- * @property WebHookOrganizerInterface|null $organizer
+ * @property WebHookOrganizerInterface|WebHookOrganizerAbstract|null $organizer
  * @property string|null $event
  * @property array $settings
  * @property string $hash
@@ -42,6 +44,7 @@ class WebHook extends Model
      * @var string[]
      */
     protected $fillable = [
+        'type',
         'wh_type',
         'wh_id',
         'organizer',
@@ -60,6 +63,7 @@ class WebHook extends Model
      * @var string[]
      */
     protected $casts = [
+        'type' => 'string',
         'wh_type' => 'string',
         'wh_id' => 'integer',
         'organizer' => 'string',
@@ -81,6 +85,11 @@ class WebHook extends Model
     ];
 
     /**
+     * @var WebHookOrganizerInterface|WebHookOrganizerAbstract
+     */
+    protected $origanizerCache = null;
+
+    /**
      * @var array
      */
     protected static array $defaultSettings = [];
@@ -95,11 +104,12 @@ class WebHook extends Model
 
     /**
      * @param $value
-     * @return WebHookOrganizerInterface|null
+     * @return WebHookOrganizerInterface|WebHookOrganizerAbstract|null
      */
     public function getOrganizerAttribute($value): ?WebHookOrganizerInterface
     {
-        return $value ? app($value) : null;
+        return $this->origanizerCache = $this->origanizerCache
+            ?: ($value ? app($value) : null);
     }
 
     /**
@@ -164,6 +174,28 @@ class WebHook extends Model
         $this->event = $class;
 
         return $this;
+    }
+
+    public function setType(string $type): static
+    {
+        $this->update(compact('type'));
+
+        return $this;
+    }
+
+    public function setTypeHttpRequest(): static
+    {
+        return $this->setType('http_request');
+    }
+
+    public function setTypeWebsocketOpenSignature(): static
+    {
+        return $this->setType('websocket_open_signature');
+    }
+
+    public function setTypeWebsocketOpenClient(): static
+    {
+        return $this->setType('websocket_open_client');
     }
 
     /**

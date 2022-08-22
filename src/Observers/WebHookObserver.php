@@ -2,6 +2,7 @@
 
 namespace Bfg\WebHooker\Observers;
 
+use Bfg\WebHooker\Jobs\WebHookerUnsubscribeJob;
 use Bfg\WebHooker\Models\WebHook;
 use Illuminate\Support\Facades\Crypt;
 
@@ -60,6 +61,9 @@ class WebHookObserver
      */
     public function deleting(WebHook $hook): void
     {
-        $hook->organizer?->unsubscribe($hook);
+        // $hook->organizer?->unsubscribe($hook);
+        if ($hook->type !== 'websocket_open_client') {
+            WebHookerUnsubscribeJob::dispatch($hook, true);
+        }
     }
 }

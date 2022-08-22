@@ -40,7 +40,7 @@ trait WebHooked
         ], [
             'event' => $event,
             'organizer' => $organizer,
-            'settings' => $settings
+            'settings' => $settings,
         ]);
     }
 

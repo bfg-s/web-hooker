@@ -1,0 +1,19 @@
+<?php
+
+namespace {{ namespace }};
+
+use Bfg\WebHooker\Models\WebHook;
+use Bfg\WebHooker\WebHookOrganizerAbstract;
+
+class {{ class }} extends WebHookOrganizerAbstract
+{
+    /**
+     * The websocket host for connection
+     * @param  WebHook  $hook
+     * @return string
+     */
+    function host(WebHook $hook): string
+    {
+        // TODO: Implement subscribe() method.
+    }
+}

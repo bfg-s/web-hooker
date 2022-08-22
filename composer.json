@@ -12,9 +12,8 @@
     "prefer-stable": true,
     "require": {
         "php": ">=8.0.0",
-        "bfg/installer": "*"
+        "workerman/workerman": "^4.1"
     },
-    "require-dev": {},
     "autoload": {
         "psr-4": {
             "Bfg\\WebHooker\\": "src/"

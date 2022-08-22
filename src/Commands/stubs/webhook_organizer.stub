@@ -1,0 +1,31 @@
+<?php
+
+namespace {{ namespace }};
+
+use Bfg\WebHooker\Models\WebHook;
+use Bfg\WebHooker\WebHookOrganizerInterface;
+
+class {{ class }} implements WebHookOrganizerInterface
+{
+    /**
+     * Method for remote subscribe
+     *
+     * @param  WebHook  $hook
+     * @return bool
+     */
+    public function subscribe(WebHook $hook): bool
+    {
+        // TODO: Implement subscribe() method.
+    }
+
+    /**
+     * Method for remote unsubscribe
+     *
+     * @param  WebHook  $hook
+     * @return bool
+     */
+    public function unsubscribe(WebHook $hook): bool
+    {
+        // TODO: Implement unsubscribe() method.
+    }
+}
