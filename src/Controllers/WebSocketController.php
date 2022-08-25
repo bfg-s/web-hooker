@@ -136,7 +136,6 @@ class WebSocketController implements MessageComponentInterface
         $hook = WebHook::query()
             ->where('status', 1)
             ->where('type', 'websocket_open_signature')
-            ->whereNotNull('event')
             ->find($id);
 
         if (! $hook) {
