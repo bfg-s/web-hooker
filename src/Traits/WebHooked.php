@@ -15,7 +15,7 @@ trait WebHooked
     /**
      * @return MorphMany
      */
-    public function webHook(): MorphMany
+    public function webHooks(): MorphMany
     {
         return $this->morphMany(WebHook::class, 'wh');
     }
@@ -47,7 +47,7 @@ trait WebHooked
         string $organizer,
         array $settings = [],
     ): WebHook|Model {
-        return $this->webHook()->updateOrCreate([], [
+        return $this->webHooks()->updateOrCreate([], [
             'organizer' => $organizer,
             'settings' => $settings
         ]);
