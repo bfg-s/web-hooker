@@ -176,26 +176,18 @@ class WebHook extends Model
         return $this;
     }
 
-    public function setType(string $type): static
+    public function setTypeWebsocketOpenSignature(): static
     {
-        $this->update(compact('type'));
+        $this->update(['type' => 'websocket_open_signature']);
 
         return $this;
     }
 
-    public function setTypeHttpRequest(): static
-    {
-        return $this->setType('http_request');
-    }
-
-    public function setTypeWebsocketOpenSignature(): static
-    {
-        return $this->setType('websocket_open_signature');
-    }
-
     public function setTypeWebsocketOpenClient(): static
     {
-        return $this->setType('websocket_open_client');
+        $this->update(['type' => 'websocket_open_client']);
+
+        return $this;
     }
 
     /**

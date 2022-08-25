@@ -121,13 +121,6 @@ $webhook = \App\Models\User::assignBridgework(
 ): \Bfg\WebHooker\Models\WebHook;
 ```
 
-To launch subscription and unsubscribing procedures, 
-you need to configure your schedule on the `webhook:associate` 
-command with an interval of one minute:
-```php
-$schedule->command('webhook:associate')->everyMinute();
-```
-
 If you want to postpone the signature for some time, 
 you can use the `subscribeDelay` method:
 ```php
@@ -145,6 +138,12 @@ $webhook->unsubscribeDelay(
 );
 ```
 
+To launch subscription and unsubscribing procedures,
+you need to configure your schedule on the `webhook:associate`
+command with an interval of one minute:
+```php
+$schedule->command('webhook:associate')->everyMinute();
+```
 
 ### Open signature type
 
