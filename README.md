@@ -287,6 +287,14 @@ you can customize your organizer a little:
     {
         return true;
     }
+``` 
+In order to prepare your payload, you can declare the `preparePayload` method in your organizer:
+```php
+...    
+    public function preparePayload(array $payload): array
+    {
+        return $payload;
+    }
 ...
 ```
 
@@ -304,7 +312,7 @@ Run the server of client connection
 ```cli
 php artisan webhook:open-client
 ```
-Suervisor
+Supervisor
 ```cfg
 [program:webhook-open-client]
 directory=/path/to/you/project

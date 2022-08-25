@@ -109,7 +109,7 @@ class WebHook extends Model
     public function getOrganizerAttribute($value): ?WebHookOrganizerInterface
     {
         return $this->origanizerCache = $this->origanizerCache
-            ?: ($value ? app($value) : null);
+            ?: ($value ? app($value, ['hook' => $this, 'webHook' => $this]) : null);
     }
 
     /**

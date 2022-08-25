@@ -11,7 +11,4 @@ return [
         'prefix' => 'webhook',
     ],
     'queue' => null,
-    'websockets' => [
-        'open_signature' => false,
-    ],
 ];

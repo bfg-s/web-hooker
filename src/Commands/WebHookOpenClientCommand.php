@@ -186,8 +186,14 @@ class WebHookOpenClientCommand extends Command
 
                 if ($organizer->isSelfMessage($hook, $payload)) {
 
-                    WebHookerEmitJob::dispatch($hook, $payload);
+                    if (
+                        $hook->organizer
+                        && method_exists($hook->organizer, 'preparePayload')
+                    ) {
+                        $payload = $hook->organizer->preparePayload($payload);
+                    }
 
+                    WebHookerEmitJob::dispatch($hook, $payload);
                 }
             }
         }

@@ -40,6 +40,7 @@ abstract class WebHookOrganizerAbstract implements WebHookOrganizerInterface
     /**
      * Send a message when creating a connection with the server
      *
+     * @abstract
      * @param  WebHook  $hook
      * @return array
      */
@@ -51,6 +52,7 @@ abstract class WebHookOrganizerAbstract implements WebHookOrganizerInterface
     /**
      * Send message when add hook to client’s server
      *
+     * @abstract
      * @param  WebHook  $hook
      * @return array
      */
@@ -62,6 +64,7 @@ abstract class WebHookOrganizerAbstract implements WebHookOrganizerInterface
     /**
      * Send message when disconnect from server
      *
+     * @abstract
      * @param  WebHook  $hook
      * @return array
      */
@@ -73,6 +76,7 @@ abstract class WebHookOrganizerAbstract implements WebHookOrganizerInterface
     /**
      * Checks an incoming message for authenticity for this hook
      *
+     * @abstract
      * @param  WebHook  $hook
      * @param  array  $payload
      * @return bool

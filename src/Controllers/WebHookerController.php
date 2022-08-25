@@ -28,7 +28,16 @@ class WebHookerController
             'response_at' => now()
         ]);
 
-        WebHookerEmitJob::dispatch($hook, $request->all());
+        $payload = $request->all();
+
+        if (
+            $hook->organizer
+            && method_exists($hook->organizer, 'preparePayload')
+        ) {
+            $payload = $hook->organizer->preparePayload($payload);
+        }
+
+        WebHookerEmitJob::dispatch($hook, $payload);
 
         return response()->json([
             'status' => true

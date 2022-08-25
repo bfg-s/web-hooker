@@ -86,7 +86,16 @@ class WebSocketController implements MessageComponentInterface
             'response_at' => now()
         ]);
 
-        WebHookerEmitJob::dispatch($hook, (array) $payload);
+        $payload = (array) $payload;
+
+        if (
+            $hook->organizer
+            && method_exists($hook->organizer, 'preparePayload')
+        ) {
+            $payload = $hook->organizer->preparePayload($payload);
+        }
+
+        WebHookerEmitJob::dispatch($hook, $payload);
     }
 
     /**
