@@ -48,7 +48,6 @@ class WebHook extends Model
         'wh_type',
         'wh_id',
         'organizer',
-        'event',
         'settings',
         'hash',
         'status',
@@ -67,7 +66,6 @@ class WebHook extends Model
         'wh_type' => 'string',
         'wh_id' => 'integer',
         'organizer' => 'string',
-        'event' => 'string',
         'settings' => 'array',
         'hash' => 'string',
         'status' => 'int',
@@ -118,6 +116,14 @@ class WebHook extends Model
     public function getRouteResponseAttribute(): string
     {
         return route('webhook.response', $this->hash);
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getEventAttribute(): ?string
+    {
+        return $this->organizer?->event($this);
     }
 
     /**

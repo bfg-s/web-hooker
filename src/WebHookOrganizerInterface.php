@@ -7,6 +7,13 @@ use Bfg\WebHooker\Models\WebHook;
 interface WebHookOrganizerInterface
 {
     /**
+     * Generate the event for hook emit
+     * @param  WebHook  $hook
+     * @return string
+     */
+    function event(WebHook $hook): string;
+
+    /**
      * Method for remote subscribe
      *
      * @param  WebHook  $hook

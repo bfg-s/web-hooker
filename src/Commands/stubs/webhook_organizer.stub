@@ -8,6 +8,16 @@ use Bfg\WebHooker\WebHookOrganizerInterface;
 class {{ class }} implements WebHookOrganizerInterface
 {
     /**
+     * Generate the event for hook emit
+     * @param  WebHook  $hook
+     * @return string
+     */
+    function event(WebHook $hook): string
+    {
+        // TODO: Implement subscribe() method.
+    }
+
+    /**
      * Method for remote subscribe
      *
      * @param  WebHook  $hook

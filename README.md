@@ -64,6 +64,16 @@ use Bfg\WebHooker\WebHookOrganizerInterface;
 class YouOrganizer implements WebHookOrganizerInterface
 {
     /**
+     * Generate the event for hook emit
+     * @param  WebHook  $hook
+     * @return string
+     */
+    function event(WebHook $hook): string
+    {
+        return YouEvent::class;
+    }
+
+    /**
      * Method for remote subscribe
      *
      * @param  WebHook  $hook
@@ -99,7 +109,6 @@ For get a request link for hook, you can use the `$hook->route_response` paramet
 You can now create bridges for some separate entry in the database or model.
 ```php
 $webhook = \App\Models\User::first()->assignBridge(
-    event: YouEvent::class,
     organizer: YouOrganizer::class,
     settings: []
 ): \Bfg\WebHooker\Models\WebHook;
@@ -107,7 +116,6 @@ $webhook = \App\Models\User::first()->assignBridge(
 or
 ```php
 $webhook = \App\Models\User::assignBridgework(
-    event: YouEvent::class,
     organizer: YouOrganizer::class,
     settings: []
 ): \Bfg\WebHooker\Models\WebHook;
@@ -170,7 +178,6 @@ php artisan make:organizer YouOrganizer
 Create the special bridge:
 ```php
 $webhook = \App\Models\User::assignBridgework(
-    event: YouEvent::class,
     organizer: YouOrganizer::class,
     settings: []
 )->setTypeWebsocketOpenSignature(): \Bfg\WebHooker\Models\WebHook;
@@ -214,6 +221,16 @@ use Bfg\WebHooker\WebHookOrganizerAbstract;
 
 class BinanceOrganizer extends WebHookOrganizerAbstract
 {
+    /**
+     * Generate the event for hook emit
+     * @param  WebHook  $hook
+     * @return string
+     */
+    function event(WebHook $hook): string
+    {
+        return YouEvent::class;
+    }
+
     /**
      * The websocket host for connection
      * @param  WebHook  $hook
@@ -302,7 +319,6 @@ In order to prepare your payload, you can declare the `preparePayload` method in
 Create the special bridge:
 ```php
 $webhook = \App\Models\User::assignBridgework(
-    event: YouEvent::class,
     organizer: BinanceOrganizer::class,
     settings: []
 )->setTypeWebsocketOpenClient(): \Bfg\WebHooker\Models\WebHook;
