@@ -110,51 +110,40 @@ You can now create bridges for some separate entry in the database or model.
 ```php
 $webhook = \App\Models\User::first()->assignBridge(
     organizer: YouOrganizer::class,
-    settings: []
+    settings: [] // Optional
 ): \Bfg\WebHooker\Models\WebHook;
 ```
 or
 ```php
 $webhook = \App\Models\User::assignBridgework(
     organizer: YouOrganizer::class,
-    settings: []
+    settings: [] // Optional
 ): \Bfg\WebHooker\Models\WebHook;
 ```
-Next you get a hook model that must be subscribed 
-for data (this may be API Request for example).
-You can use immediate subscription or delay.
 
-For the immediate launch of the signature procedure, 
-you can use the `subscribe` method:
-
+To launch subscription and unsubscribing procedures, 
+you need to configure your schedule on the `webhook:associate` 
+command with an interval of one minute:
 ```php
-/** @var \Bfg\WebHooker\Models\WebHook $webhook */
-$webhook->subscribe();
+$schedule->command('webhook:associate')->everyMinute();
 ```
-This method is attached to the job that does the signature.
 
-And you can delay needs to subscribe:
+If you want to postpone the signature for some time, 
+you can use the `subscribeDelay` method:
 ```php
 /** @var \Bfg\WebHooker\Models\WebHook $webhook */
 $webhook->subscribeDelay(
     now()->addHour()
 );
 ```
-And you can add datetime when needs to unsubscribe:
+If you want to indicate the time of the unsubscribing, 
+you can also indicate through the `unsubscribeDelay` method:
 ```php
 /** @var \Bfg\WebHooker\Models\WebHook $webhook */
 $webhook->unsubscribeDelay(
     now()->addHours(2)
 );
 ```
-But for this you need to add to your schedule of association:
-```php
-$schedule->command('webhook:associate')->everyMinute();
-```
-
-
-
-
 
 
 ### Open signature type

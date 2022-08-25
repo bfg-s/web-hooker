@@ -2,15 +2,12 @@
 
 namespace Bfg\WebHooker\Models;
 
-use Bfg\WebHooker\Jobs\WebHookerSubscribeJob;
-use Bfg\WebHooker\Jobs\WebHookerUnsubscribeJob;
 use Bfg\WebHooker\Traits\WebHooked;
 use Bfg\WebHooker\WebHookOrganizerAbstract;
 use Bfg\WebHooker\WebHookOrganizerInterface;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Foundation\Bus\PendingDispatch;
 
 /**
  * @property-read int $id
@@ -149,7 +146,9 @@ class WebHook extends Model
      */
     public function setSettings(array $settings): static
     {
-        $this->settings = array_merge($this->settings, $settings);
+        $this->update([
+            'settings' => array_merge($this->settings, $settings)
+        ]);
 
         return $this;
     }
@@ -170,14 +169,9 @@ class WebHook extends Model
      */
     public function setOrganizer(string $class): static
     {
-        $this->organizer = $class;
-
-        return $this;
-    }
-
-    public function setEvent(string $class): static
-    {
-        $this->event = $class;
+        $this->update([
+            'organizer' => $class
+        ]);
 
         return $this;
     }
@@ -202,22 +196,6 @@ class WebHook extends Model
     public function setTypeWebsocketOpenClient(): static
     {
         return $this->setType('websocket_open_client');
-    }
-
-    /**
-     * @return PendingDispatch|null
-     */
-    public function subscribe(): ?PendingDispatch
-    {
-        return WebHookerSubscribeJob::dispatch($this);
-    }
-
-    /**
-     * @return PendingDispatch|null
-     */
-    public function unsubscribe(): ?PendingDispatch
-    {
-        return WebHookerUnsubscribeJob::dispatch($this);
     }
 
     /**

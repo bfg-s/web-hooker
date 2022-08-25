@@ -16,6 +16,7 @@ class UpdateWebhookTableForEventDrop extends Migration
     {
         Schema::table('webhooks', function (Blueprint $table) {
             $table->dropColumn(['event']);
+            $table->index(['type']);
         });
     }
 
@@ -30,6 +31,7 @@ class UpdateWebhookTableForEventDrop extends Migration
              $table->string('event', 45)
                  ->nullable()
                  ->after('organizer');
+             $table->dropIndex(['type']);
          });
      }
 }
