@@ -36,7 +36,8 @@ class WebHookerEmitJob implements ShouldQueue
         $this->hook->organizer && event(
             app($this->hook->event, [
                 'hook' => $this->hook,
-                'request' => $this->request
+                'payload' => $this->request,
+                'request' => $this->request,
             ])
         );
     }
