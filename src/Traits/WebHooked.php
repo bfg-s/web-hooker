@@ -4,7 +4,7 @@ namespace Bfg\WebHooker\Traits;
 
 use Bfg\WebHooker\Models\WebHook;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
  * @property-read WebHook|null $webHook
@@ -13,11 +13,11 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 trait WebHooked
 {
     /**
-     * @return MorphOne
+     * @return MorphMany
      */
-    public function webHook(): MorphOne
+    public function webHook(): MorphMany
     {
-        return $this->morphOne(WebHook::class, 'wh');
+        return $this->morphMany(WebHook::class, 'wh');
     }
 
     /**
