@@ -8,6 +8,7 @@ interface WebHookOrganizerInterface
 {
     /**
      * Generate the event for hook emit
+     * 
      * @param  WebHook  $hook
      * @return string
      */
@@ -16,6 +17,9 @@ interface WebHookOrganizerInterface
     /**
      * Method for remote subscribe
      *
+     * To return the truth if the subscription was successful,
+     * otherwise there will be a repeated request for the next iteration.
+     *
      * @param  WebHook  $hook
      * @return bool
      */
@@ -23,6 +27,9 @@ interface WebHookOrganizerInterface
 
     /**
      * Method for remote unsubscribe
+     *
+     * To return the truth if the unsubscription was successful,
+     * otherwise there will be a repeated request for the next iteration.
      *
      * @param  WebHook  $hook
      * @return bool

@@ -4,6 +4,7 @@ namespace Bfg\WebHooker\Observers;
 
 use Bfg\WebHooker\Jobs\WebHookerUnsubscribeJob;
 use Bfg\WebHooker\Models\WebHook;
+use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Support\Facades\Crypt;
 
 class WebHookObserver
@@ -50,9 +51,9 @@ class WebHookObserver
      */
     public function created(WebHook $hook): void
     {
-        $hook->hash = Crypt::encrypt($hook->id);
-
-        $hook->save();
+        $hook->update([
+            'hash' => Crypt::encrypt($hook->id)
+        ]);
     }
 
     /**
@@ -61,9 +62,10 @@ class WebHookObserver
      */
     public function deleting(WebHook $hook): void
     {
-        // $hook->organizer?->unsubscribe($hook);
         if ($hook->type !== 'websocket_open_client') {
-            WebHookerUnsubscribeJob::dispatch($hook, true);
+
+            app(Dispatcher::class)
+                ->dispatchNow(new WebHookerUnsubscribeJob($hook, true));
         }
     }
 }

@@ -9,6 +9,7 @@ class {{ class }} extends WebHookOrganizerAbstract
 {
     /**
      * Generate the event for hook emit
+     *
      * @param  WebHook  $hook
      * @return string
      */
@@ -19,6 +20,7 @@ class {{ class }} extends WebHookOrganizerAbstract
 
     /**
      * The websocket host for connection
+     *
      * @param  WebHook  $hook
      * @return string
      */

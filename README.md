@@ -51,6 +51,22 @@ Create your own event, which is a standard Laravel functionality.
 ```bash
 php artisan make:event YouEvent
 ```
+In the construct of your event, you can accept the Hook model and a payload.
+```php
+...
+    /**
+     * Create a new event instance.
+     *
+     * @return void
+     */
+    public function __construct(
+        public WebHook $hook,
+        public array $payload,
+    ) {
+        //
+    }
+...
+```
 
 Create the organizer class by using the `Bfg\WebHooker\WebHookOrganizerInterface` interface:
 ```php
@@ -75,6 +91,9 @@ class YouOrganizer implements WebHookOrganizerInterface
 
     /**
      * Method for remote subscribe
+     *  
+     * To return the truth if the subscription was successful, 
+     * otherwise there will be a repeated request for the next iteration.
      *
      * @param  WebHook  $hook
      * @return bool
@@ -89,6 +108,9 @@ class YouOrganizer implements WebHookOrganizerInterface
     /**
      * Method for remote unsubscribe
      *
+     * To return the truth if the unsubscription was successful, 
+     * otherwise there will be a repeated request for the next iteration.
+     * 
      * @param  WebHook  $hook
      * @return bool
      */
