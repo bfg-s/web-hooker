@@ -193,7 +193,10 @@ class WebHookOpenClientCommand extends Command
                         $payload = $hook->organizer->preparePayload($payload);
                     }
 
-                    WebHookerEmitJob::dispatch($hook, $payload);
+                    if ($payload) {
+
+                        WebHookerEmitJob::dispatch($hook, $payload);
+                    }
                 }
             }
         }

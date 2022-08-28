@@ -95,7 +95,10 @@ class WebSocketController implements MessageComponentInterface
             $payload = $hook->organizer->preparePayload($payload);
         }
 
-        WebHookerEmitJob::dispatch($hook, $payload);
+        if ($payload) {
+
+            WebHookerEmitJob::dispatch($hook, $payload);
+        }
     }
 
     /**
