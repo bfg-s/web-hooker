@@ -33,7 +33,7 @@ class WebHookerController
             $hook->organizer
             && method_exists($hook->organizer, 'preparePayload')
         ) {
-            $payload = $hook->organizer->preparePayload($payload);
+            $payload = $hook->organizer->preparePayload($hook, $payload);
         }
 
         if ($payload) {

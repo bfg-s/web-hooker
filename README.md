@@ -318,7 +318,7 @@ you can customize your organizer a little:
 In order to prepare your payload, you can declare the `preparePayload` method in your organizer:
 ```php
 ...    
-    public function preparePayload(array $payload): array
+    public function preparePayload(WebHook $hook, array $payload): array
     {
         return $payload;
     }
