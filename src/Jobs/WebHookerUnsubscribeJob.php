@@ -38,7 +38,7 @@ class WebHookerUnsubscribeJob implements ShouldQueue
             && (! $this->hook->unsubscribe_at || $this->hook->unsubscribe_at <= now())
             && (! $this->hook->organizer || $this->hook->organizer?->unsubscribe($this->hook))
         ) {
-            $this->deleting && $this->hook->update([
+            ! $this->deleting && $this->hook->update([
                 'unsubscribed_at' => now(),
                 'unsubscribe_at' => null,
                 'status' => 0
