@@ -3,9 +3,11 @@ namespace Bfg\WebHooker\Commands;
 
 use Bfg\WebHooker\Jobs\WebHookerEmitJob;
 use Bfg\WebHooker\Models\WebHook;
+use Bfg\WebHooker\Traits\WebHooked;
 use Bfg\WebHooker\WebHookOrganizerAbstract;
 use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 use Workerman\Timer;
 use Workerman\Connection\AsyncTcpConnection;
 
@@ -17,6 +19,8 @@ class WebHookOpenClientCommand extends Command
      * @var string
      */
     protected $signature = 'webhook:open-client
+    {model? : Model for default bridge}
+    {organizer? : Organizer for default bridge}
     {--t|timeout=5 : Update list timeout interval in seconds}';
 
     /**
@@ -39,6 +43,11 @@ class WebHookOpenClientCommand extends Command
      */
     public function handle(): int
     {
+        $this->makeDefaultBridge(
+            $this->argument('model'),
+            $this->argument('organizer')
+        );
+
         $worker = new HookWorker();
 
         $worker->onWorkerStart = [$this, 'workerStart'];
@@ -46,6 +55,34 @@ class WebHookOpenClientCommand extends Command
         HookWorker::runAll();
 
         return 0;
+    }
+
+    /**
+     * @param $model
+     * @param $organizer
+     * @return void
+     */
+    protected function makeDefaultBridge($model, $organizer)
+    {
+        if ($model && $organizer) {
+            /** @var WebHooked $model */
+            $model = "App\\Models\\" . ucfirst(Str::camel($model));
+            $organizer = "App\\WebHook\\Organizers\\" . ucfirst(Str::camel($organizer));
+
+            if (
+                class_exists($model)
+                && class_exists($organizer)
+                && method_exists($model, 'assignBridgework')
+                && WebHook::where('wh_type', $model)
+                    ->where('organizer', $organizer)
+                    ->whereNull('wh_id')
+                    ->doesntExist()
+            ) {
+                $model::assignBridgework(
+                    organizer: $organizer
+                )->setTypeWebsocketOpenClient();
+            }
+        }
     }
 
     /**
